@@ -288,4 +288,5 @@ AegisX е издаден под **GNU General Public License v2.0**.
 
 ---
 
-*AegisX – Модерно управление на банове за Counter Strike 1.6 · 2026*
+*AegisX – Модерно управление на банове Counter-Strike 1.6 · 2026*
+
