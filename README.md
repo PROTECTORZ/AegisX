@@ -1,292 +1,305 @@
-# ⚡ AegisX
+# RE:Aegis Bans v2.0 & Proxy Check Pro
 
-**Централизирана система за управление на банове за CS 1.6 / Half-Life / GoldSrc**
+![AMX Mod X](https://img.shields.io/badge/AMX_Mod_X-1.9+-green)
+![ReAPI](https://img.shields.io/badge/ReAPI-Required-blue)
+![EasyHTTP](https://img.shields.io/badge/EasyHTTP-Required-orange)
+![License](https://img.shields.io/badge/License-Free-lightgrey)
 
-> Модерна замяна на AMXBans – AMX Mod X плъгини + REST API + React Web панел
+## Advanced Ban Management and Network Security Suite for AMX Mod X
 
-[![Версия](https://img.shields.io/badge/версия-1.0.0-blue)]()
-[![Лиценз](https://img.shields.io/badge/лиценз-GPL%20v2-green)]()
-[![Платформа](https://img.shields.io/badge/платформа-CS%201.6%20%7C%20GoldSrc-orange)]()
+RE:Aegis Bans v2.0 & Proxy Check Pro is an advanced anti-evasion and network security solution for Counter-Strike 1.6 servers running AMX Mod X and ReAPI.
 
----
-
-## 📋 Съдържание
-
-- [Функции](#функции)
-- [Архитектура](#архитектура)
-- [Изисквания](#изисквания)
-- [Инсталация](#инсталация)
-- [Конфигурация](#конфигурация)
-- [AMXX Команди](#amxx-команди)
-- [API](#api)
+The project combines intelligent ban tracking, fingerprint identification, subnet analysis, VPN/Proxy detection, flood protection, and automated ban-evasion detection into a single package.
 
 ---
 
-## ✨ Функции
+# Features
 
-### AMXX Плъгини
-| Плъгин | Функция |
-|--------|---------|
-| `aegisx_core.amxx`   | SQL връзка, REST API, heartbeat, forwards, suspicious check |
-| `aegisx_bans.amxx`   | Ban/Unban система, kick при connect |
-| `aegisx_comms.amxx`  | Mute / Gag / Silence |
-| `aegisx_report.amxx` | `/report` команда, скрийншот, admin нотификации |
-| `aegisx_sync.amxx`   | Multi-сървър sync (RCON Push + MySQL Polling fallback) |
+## RE:Aegis Bans
 
-### Web панел
-- 🌙 Dark / ☀️ Light тема с превключвател
-- 🇧🇬 Български / 🇬🇧 English (i18n)
-- 📊 Dashboard – статистики, сървъри, последни банове
-- 🔨 Банове – списък, търсене, unban
-- 🔇 Комс – mute/gag/silence управление
-- 🚩 Репорти – преглед и действия
-- 🖥️ Сървъри – online статус, играчи, карта
-- 👤 Играчи – профил, бан история, IP/ник алиаси
-- ⚠️ Suspicious – маркиране за наблюдение (без ban права)
-- 👑 Админи – управление, флагове, изтичане
+- Smart Ban System
+- SteamID Detection
+- IP Address Detection
+- Client Fingerprint Tracking
+- Subnet Matching (/24 and /16)
+- Automatic Ban Evasion Detection
+- Screenshot System
+- Advanced Unban Search
+- SQL Storage Support
+- nVault Storage Support
+- Public API for Third-Party Plugins
 
-### Интеграции
-- 🔔 **Discord webhooks** – нотификации за нов бан, репорт, suspicious
-- 🔄 **RCON Push sync** – почти real-time синхронизация между сървъри
-- 🔐 **JWT + API Key** – двойна автентикация
+## Proxy Check Pro
 
----
-
-## 🏗️ Архитектура
-
-```
-CS 1.6 Сървъри (Pterodactyl / Linux)
-  aegisx_*.amxx
-      │ HTTP (API Key)        │ RCON Push
-      ▼                       ▼
-┌─────────────────────────────────────┐
-│           VPS (Docker)              │
-│  MySQL ←→ Fastify API ←→ React UI   │
-│              ↕ nginx (SSL)          │
-└─────────────────────────────────────┘
-              ↕ Discord Webhook
-```
-
-**Sync механизъм:**
-```
-Нов бан на Сървър A
-  → MySQL INSERT
-  → REST API → RCON "aeg_forcesync bans" → Сървър B (< 1 сек)
-  → MySQL polling на 30 сек (fallback ако RCON fail)
-```
+- ProxyCheck.io Integration
+- VPN Detection
+- Proxy Detection
+- Hosting Provider Detection
+- Local Cache System
+- Flood Protection
+- Strict Flood Mode
+- Automatic Subnet Analysis
+- Cached Network Reputation Checks
 
 ---
 
-## 📦 Изисквания
+# Requirements
 
-### Сървър (AMXX)
-- AMX Mod X 1.10.x
-- MySQL X модул
-- easy_http 0.4+ (за REST API)
-- ezjson (за JSON парсване)
+## Required
 
-### VPS (API + панел)
-- Docker Engine 20.10+
-- Docker Compose v2.0+
-- Минимум 1GB RAM
-- Домейн с SSL сертификат (Let's Encrypt)
+- AMX Mod X 1.9+
+- ReAPI
+- ReHLDS
+- EasyHTTP Module
 
----
+## Optional
 
-## 🚀 Инсталация
-
-### 1. VPS – Docker Compose
-
-```bash
-# Клонирай проекта
-git clone https://github.com/yourname/aegisx.git
-cd aegisx
-
-# Конфигурирай .env
-cp .env.example .env
-nano .env
-# Задай: MYSQL_ROOT_PASSWORD, DB_PASS, JWT_SECRET, API_KEY_SALT
-
-# SSL (Let's Encrypt)
-mkdir -p ssl
-docker run --rm -p 80:80 \
-  -v $(pwd)/ssl:/etc/letsencrypt \
-  certbot/certbot certonly --standalone \
-  -d yourdomain.com --agree-tos -m you@email.com
-
-# Копирай сертификата
-cp ssl/live/yourdomain.com/fullchain.pem ssl/cert.pem
-cp ssl/live/yourdomain.com/privkey.pem   ssl/key.pem
-
-# Стартирай
-docker compose up -d --build
-
-# Провери
-docker compose ps
-docker compose logs api --tail=50
-```
-
-**Достъп:** `https://yourdomain.com`
+- SQLx
+- MySQL
+- nVault
 
 ---
 
-### 2. Сървър – AMXX плъгини
+# Installation
 
-```bash
-# Копирай в addons/amxmodx/
-plugins/    ← aegisx_*.amxx
-configs/AegisX/   ← core.cfg, bans.cfg, comms.cfg, report.cfg, sync.cfg
-lang/       ← aegisx_*.txt
-```
+## 1. Install the Plugins
 
-**`configs/AegisX/core.cfg`:**
-```
-aegisx_sql_host    "IP_на_MySQL"
-aegisx_sql_user    "aegisx"
-aegisx_sql_pass    "паролата"
-aegisx_sql_db      "aegisx"
-aegisx_api_url     "https://yourdomain.com/api"
-aegisx_api_token   "твоя_api_key"
-aegisx_srv_name    "My CS 1.6 Server"
+Copy the compiled plugins into:
+
+```text
+addons/amxmodx/plugins/
 ```
 
-**`configs/plugins-aegisx.ini`:**
-```
-aegisx_core.amxx
-aegisx_bans.amxx
-aegisx_comms.amxx
-aegisx_report.amxx
-aegisx_sync.amxx
+Add them to:
+
+```text
+addons/amxmodx/configs/plugins.ini
 ```
 
-**`configs/plugins.ini`** – добави:
-```
-plugins-aegisx.ini
-```
+Example:
 
-### 3. Генериране на API Key за сървъра
-
-```bash
-# Влез в панела → Admins → (не е реализирано) или директно в MySQL:
-# Генерирай ключ:
-openssl rand -hex 32
-
-# INSERT в MySQL:
-INSERT INTO aeg_api_tokens (name, token_hash, type, server_id, permissions, is_active, created_at)
-VALUES (
-  'Server 1',
-  SHA2(CONCAT('ТВОЯ_КЛЮЧ', 'API_KEY_SALT_ОТ_ENV'), 256),
-  0, 1, '["*"]', 1, UNIX_TIMESTAMP()
-);
-```
-
-Задай ключа в `core.cfg`:
-```
-aegisx_api_token "ТВОЯ_КЛЮЧ"
+```ini
+re_aegis_bans.amxx
+proxy_check_pro.amxx
 ```
 
 ---
 
-## ⚙️ Конфигурация
+## 2. Install EasyHTTP
 
-### core.cfg (пълни CVARs)
-| CVAR | По подразбиране | Описание |
-|------|-----------------|----------|
-| `aegisx_sql_host` | `127.0.0.1` | MySQL хост |
-| `aegisx_sql_port` | `3306` | MySQL порт |
-| `aegisx_sql_user` | `aegisx` | MySQL потребител |
-| `aegisx_sql_pass` | — | MySQL парола |
-| `aegisx_sql_db`   | `aegisx` | MySQL база |
-| `aegisx_sql_prefix` | `aeg` | Префикс на таблиците |
-| `aegisx_api_url`  | — | URL на REST API |
-| `aegisx_api_token`| — | API Key (FCVAR_PROTECTED) |
-| `aegisx_api_enabled` | `1` | Включи REST API |
-| `aegisx_srv_name` | hostname | Показвано име на сървъра |
-| `aegisx_log_level` | `1` | 0=debug 1=info 2=warn 3=error |
+Copy the EasyHTTP module to:
 
-### sync.cfg
-| CVAR | По подразбиране | Описание |
-|------|-----------------|----------|
-| `aegisx_sync_interval` | `30` | Polling fallback (сек) |
-| `aegisx_sync_bans`     | `1`  | Синхронизирай банове |
-| `aegisx_sync_comms`    | `1`  | Синхронизирай комс |
-| `aegisx_sync_admins`   | `1`  | Синхронизирай админи |
-| `aegisx_sync_status`   | `1`  | Heartbeat към БД |
-
----
-
-## 🎮 AMXX Команди
-
-### Бан команди
-| Команда | Достъп | Описание |
-|---------|--------|----------|
-| `aeg_ban <играч> <минути> <причина>` | ADMIN_BAN | Бани играч |
-| `aeg_unban <steamid>` | ADMIN_BAN | Отбани играч |
-| `aeg_banmenu` | ADMIN_BAN | Менюто за бан |
-| `aeg_banlist` | ADMIN_BAN | Списък с банове |
-
-### Комс команди
-| Команда | Достъп | Описание |
-|---------|--------|----------|
-| `aeg_mute <играч> <минути> [причина]` | ADMIN_BAN | Mute |
-| `aeg_gag <играч> <минути> [причина]`  | ADMIN_BAN | Gag |
-| `aeg_silence <играч> <минути> [причина]` | ADMIN_BAN | Silence |
-| `aeg_unmute <играч>` | ADMIN_BAN | Unmute |
-| `aeg_ungag <играч>` | ADMIN_BAN | Ungag |
-
-### Sync команди
-| Команда | Достъп | Описание |
-|---------|--------|----------|
-| `aeg_forcesync <bans\|comms\|admins\|all>` | ADMIN_RCON | Force sync (RCON push) |
-| `aeg_sync` | ADMIN_RCON | Manual пълен sync |
-| `aeg_syncstatus` | ADMIN_BAN | Статус на sync |
-
-### Чат команди (играчи)
-| Команда | Описание |
-|---------|----------|
-| `/report` или `!report` | Репортвай играч |
-
----
-
-## 🔌 API
-
-Базов URL: `https://yourdomain.com/api`
-
-### Автентикация
-```
-# За Web панела (JWT):
-Authorization: Bearer <jwt_token>
-
-# За AMXX плъгините (API Key):
-X-Api-Key: <api_key>
+```text
+addons/amxmodx/modules/
 ```
 
-### Основни endpoints
-| Метод | Endpoint | Описание |
-|-------|----------|----------|
-| POST | `/auth/login` | Вход, получи JWT |
-| GET  | `/bans` | Списък с банове |
-| POST | `/bans` | Нов бан |
-| DELETE | `/bans/:id` | Unban |
-| GET  | `/comms` | Комс наказания |
-| POST | `/comms` | Ново наказание |
-| GET  | `/reports` | Репорти |
-| POST | `/reports` | Нов репорт |
-| PATCH | `/reports/:id` | Смени статус |
-| GET  | `/servers` | Сървъри |
-| GET  | `/players/:steamid` | Профил на играч |
-| GET  | `/suspicious/check/:steamid` | Проверка |
-| POST | `/suspicious` | Маркирай играч |
+Enable it inside:
+
+```text
+addons/amxmodx/configs/modules.ini
+```
+
+```ini
+easy_http
+```
 
 ---
 
-## 📜 Лиценз
+## 3. Configure ProxyCheck API
 
-AegisX е издаден под **GNU General Public License v2.0**.
+Set your ProxyCheck.io API key:
 
-Базиран на концепцията на AMXBans. Цялостно пренаписан и модернизиран.
+```pawn
+new const g_szKey[] = "YOUR_PROXYCHECK_API_KEY";
+```
 
 ---
 
-*AegisX – Модерно управление на банове Counter-Strike 1.6 · 2026*
+# Smart Ban Score System
 
+When a player connects, RE:Aegis calculates a match score based on known identifiers.
+
+| Identifier | Score |
+|------------|--------|
+| SteamID | 3 |
+| IP Address | 3 |
+| Fingerprint | 2 |
+| Subnet /24 | 1 |
+| Subnet /16 | 1 |
+
+## Default Threshold
+
+```cfg
+ab_score_autoban "3"
+```
+
+### Examples
+
+**SteamID Match**
+
+```text
+Score = 3
+```
+
+Result:
+
+```text
+Automatic Ban
+```
+
+**Fingerprint + Subnet Match**
+
+```text
+2 + 1 = 3
+```
+
+Result:
+
+```text
+Automatic Ban
+```
+
+---
+
+# Fingerprint System
+
+The fingerprint is generated using stable client cvars:
+
+```text
+rate
+cl_updaterate
+cl_cmdrate
+cl_dlmax
+cl_lc
+cl_lw
+cl_dlfile
+_vgui_menus
+lefthand
+```
+
+The collected values are hashed using MD5 to create a persistent client fingerprint.
+
+This allows the system to identify players even after changing:
+
+- SteamID
+- IP Address
+- VPN Endpoint
+
+---
+
+# Configuration
+
+## RE:Aegis Bans
+
+```cfg
+ab_storage_type "0"
+
+ab_fp_enabled "1"
+
+ab_score_auth "3"
+ab_score_ip "3"
+ab_score_fp "2"
+
+ab_score_subnet_mini "1"
+ab_score_subnet_full "1"
+
+ab_score_autoban "3"
+ab_score_logonly "1"
+
+ab_fp_ban_minutes "0"
+ab_subnet_ban_minutes "10080"
+
+ab_pwn_enabled "1"
+```
+
+## Proxy Check Pro
+
+```cfg
+pcp_enabled "1"
+
+pcp_cache_days "30"
+
+pcp_flood_threshold "15"
+
+pcp_subnet_limit "5"
+
+pcp_strict_flood "1"
+```
+
+---
+
+# Administrative Commands
+
+## Ban Management
+
+```text
+amx_ban <target> <minutes> <reason>
+amx_banip <target> <minutes> <reason>
+amx_banid <target> <minutes> <reason>
+
+amx_addban <target> <minutes> <reason>
+
+amx_unban <search>
+
+amx_pwn <target> <minutes>
+
+amx_ss <target>
+
+amx_checkfp <target>
+```
+
+## Proxy Check Pro
+
+```text
+amx_pcp_status
+
+amx_pcp_check <ip>
+
+amx_pcp_flush
+```
+
+---
+
+# SQL Installation
+
+If SQL storage is enabled:
+
+```cfg
+ab_storage_type "1"
+```
+
+Import the provided `install.sql` file before starting the server.
+
+---
+
+# Public API
+
+## Natives
+
+```pawn
+native re_aegis_ban_player(...);
+native re_aegis_unban_player(...);
+native re_aegis_screenshot(...);
+native re_aegis_get_fingerprint(...);
+native re_aegis_get_match_score(...);
+```
+
+## Forward
+
+```pawn
+forward re_aegis_suspicious_match(id, score, autoBanned);
+```
+
+Triggered whenever a suspicious match is detected.
+
+---
+
+# License
+
+Free for personal and commercial server use.
+
+## Credits
+
+Dynamic Defense Project
+
+RE:Aegis Bans v2.0 & Proxy Check Pro
